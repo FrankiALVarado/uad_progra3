@@ -12,6 +12,7 @@ using namespace std;
 #include "../Include/C3DModel.h"
 #include "../Include/CWideStringHelper.h"
 
+
 /* */
 CAppCubeTest::CAppCubeTest() :
 	CAppCubeTest(CGameWindow::DEFAULT_WINDOW_WIDTH, CGameWindow::DEFAULT_WINDOW_HEIGHT) // C++11 ability to call one constructor from another
@@ -137,8 +138,12 @@ void CAppCubeTest::update(double deltaTime)
 /* */
 void CAppCubeTest::render()
 {
-	CVector3 objPos2;
-	objPos2.setValues(m_objectPosition.getX() + 2.5f, m_objectPosition.getY(), m_objectPosition.getZ());
+	//HINSTANCE inst =LoadLibrary (L"C:\\Users\\frank\\OneDrive\\Documentos\\Progra3MathDLL\\Debug\\Progra3MathDLL");
+	//CVector3 objPos2;
+	//objPos2.setValues(m_objectPosition.getX() + 2.5f, m_objectPosition.getY(), m_objectPosition.getZ());
+
+	//f_ptr ptr_vector = (f_ptr) GetProcAddress(inst, "CVector3::setValues");
+	//ptr_vector(m_objectPosition.getX() + 2.5f, m_objectPosition.getY(), m_objectPosition.getZ());
 
 	// convert total degrees rotated to radians;
 	double totalDegreesRotatedRadians = m_objectRotation * 3.1459 / 180.0;
@@ -150,6 +155,7 @@ void CAppCubeTest::render()
 	pos2 += CVector3(3.0f, 0.0f, 0.0f);
 	MathHelper::Matrix4 modelMatrix2 = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, pos2);
 
+	//FreeLibrary(inst);
 	// No model loaded, show test cubes
 	getOpenGLRenderer()->renderColorCube(&modelMatrix);
 	getOpenGLRenderer()->renderTexturedCube(m_texturedCubeTextureID, &modelMatrix2);

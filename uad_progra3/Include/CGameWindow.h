@@ -83,6 +83,7 @@ private:
 
 	// Process user input (keyboard, mouse)
 	void processInput(void *appPointer);
+	float m_cameraDir = 0;
 
 public:
 	// Constructors and Destructor

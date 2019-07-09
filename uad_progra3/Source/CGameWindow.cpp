@@ -270,9 +270,9 @@ void CGameWindow::mainLoop(void *appPointer)
 
 		/* Clear color and depth buffer */
 		m_ReferenceRenderer->clearScreen();
-
 		/* Process user input */
 		processInput(appPointer);
+		//m_ReferenceRenderer->moveCamera(m_cameraDir);
 
 		/* Time-based animation using a high-performance counter */
 		// Good example of frame-based animation vs time-based animation: http://blog.sklambert.com/using-time-based-animation-implement/
@@ -589,6 +589,7 @@ void CGameWindow::processInput(void *appPointer)
 				((CApp *)appPointer)->onArrowRight(CGameWindow::keyMods);
 			}
 		}
+		m_cameraDir = 0;
 	}
 }
 

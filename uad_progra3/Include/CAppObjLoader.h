@@ -54,7 +54,7 @@ public:
 	// Method to initialize any objects for this class
 	void initialize();
 
-	// Method to update any objecs based on time elapsed since last frame
+	// Method to update any objects based on time elapsed since last frame
 	void update(double deltaTime);
 
 	// Method to run the app

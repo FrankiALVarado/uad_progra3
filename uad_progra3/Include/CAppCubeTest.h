@@ -5,7 +5,7 @@
 
 #include "Globals.h"
 #include "CApp.h"
-#include "CVector3.h"
+//#include "CVector3.h"
 
 /* ******************************************************************************************************************************************
  * This class shows an example of how to display two cubes on screen, one of them has a texture, and the other one has colours only

@@ -24,7 +24,7 @@ private:
 	CGameMenu       *m_Menu;           // Pointer to our CMenu object
 	COpenGLRenderer *m_OpenGLRenderer; // Pointer to our OpenGL renderer object
 	bool m_Paused;                     // Is the app paused?  (i,e: window minimized)
-	bool isWindowInitialized() const;  // Is the CGameWindow object initialized ?
+	bool isWindowInitialized() const;  // Is the CGameWindow obje ct initialized ?
 	
 protected:
 	CGameWindow     * const getGameWindow()     const { return m_Window; }

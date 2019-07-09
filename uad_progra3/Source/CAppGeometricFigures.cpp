@@ -307,12 +307,12 @@ void CAppGeometricFigures::createPyramidGeometry()
 	m_numFacesPyramid = 6;
 
 	unsigned short tIndices[18] = {
-		0, 1, 2,    
-		0, 2, 4,    
-		0, 4, 3,    
-		0, 3, 1,    
-		1, 3, 2,
-		2, 3, 4
+		0, 1, 2,    // 0,1,2
+		0, 2, 4,    // 0,2,4
+		0, 4, 3,    // 0,4,3
+		0, 3, 1,    // 0,3,1
+		1, 3, 2,    // 1,3,2
+		2, 3, 4     // 2,3,4
 	};
 
 	float nData[18] = {

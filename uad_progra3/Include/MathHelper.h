@@ -57,6 +57,12 @@ namespace MathHelper
 			           translation.getX(), translation.getY(), translation.getZ(), 1.0f);
 	}
 
+	inline static Matrix4 MatMultiply(
+		Matrix4 M1, Matrix4 M2)
+	{
+		float r[4][4];
+	}
+
 	//
 	inline static Matrix4 Multiply(Matrix4 m1, Matrix4 m2)
 	{
