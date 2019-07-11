@@ -1,11 +1,12 @@
 #pragma once
 #include "../uad_progra3/Include/CApp.h"
 #include "../uad_progra3/Include/Globals.h"
-
+#include "CHexWorld.h"
 class CAppHexGrid : public CApp
 {
 	bool m_initialized;
 
+	CHexWorld * m_hexworld;
 	// Variables used for controlling the rotation and object position
 	// ---------------------------------------------------------------
 

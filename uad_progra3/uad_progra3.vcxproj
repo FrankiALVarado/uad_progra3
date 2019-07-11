@@ -82,6 +82,7 @@
     <LibraryPath>C:\Users\frank\OneDrive\Documentos\Progra3MathDLL\Debug;$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN64\lib-vc2015;$(LibraryPath)</LibraryPath>
     <IntDir>Binaries\Intermediate\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)Binaries\Exe\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -168,6 +169,7 @@
     <ClInclude Include="C3DModel_Fbx.h" />
     <ClInclude Include="CAppHexGrid.h" />
     <ClInclude Include="Cesfera.h" />
+    <ClInclude Include="CHexWorld.h" />
     <ClInclude Include="Include\C3DModel.h" />
     <ClInclude Include="Include\C3DModel_Obj.h" />
     <ClInclude Include="Include\CApp.h" />
@@ -199,6 +201,7 @@
     <ClCompile Include="C3DModel_Fbx.cpp" />
     <ClCompile Include="CAppHexGrid.cpp" />
     <ClCompile Include="Cesfera.cpp" />
+    <ClCompile Include="CHexWorld.cpp" />
     <ClCompile Include="Dependencies\GLAD\glad-4.3-core\src\glad.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

@@ -153,6 +153,9 @@
     <ClInclude Include="CAppHexGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CHexWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -225,6 +228,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CAppHexGrid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CHexWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
