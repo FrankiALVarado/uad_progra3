@@ -9,6 +9,7 @@ using namespace std;
 #include "../uad_progra3/Include/CApp.h"
 #include "../uad_progra3/Include/Globals.h"
 #include "../uad_progra3/Include/CWideStringHelper.h"
+#include "CGrid.h"
 
 
 /* */
@@ -24,7 +25,7 @@ CAppHexGrid::CAppHexGrid(int window_width, int window_height) :
 	m_objectRotation{ 0.0 },
 	m_objectPosition{ -1.5f, 0.0f, 0.0f },
 	m_rotationSpeed{ DEFAULT_ROTATION_SPEED },
-	m_pyramidVertexArrayObject{ 0 },
+	m_HexgridVertexArrayObject{ 0 },
 	m_numFacesHexagon{ 0 },
 	m_renderPolygonMode{ 0 }
 	
@@ -50,9 +51,9 @@ CAppHexGrid::~CAppHexGrid()
 		getOpenGLRenderer()->deleteTexture(&m_textureID);
 	}
 
-	if (m_pyramidVertexArrayObject > 0)
+	if (m_HexgridVertexArrayObject > 0)
 	{
-		getOpenGLRenderer()->freeGraphicsMemoryForObject(&m_pyramidVertexArrayObject);
+		getOpenGLRenderer()->freeGraphicsMemoryForObject(&m_HexgridVertexArrayObject);
 	}
 	// =================================================
 }
@@ -140,7 +141,7 @@ void CAppHexGrid::initialize()
 	}
 
 	m_initialized = true;
-	createPyramidGeometry();
+	CreateGridGeometry();
 }
 
 /* */
@@ -150,7 +151,7 @@ void CAppHexGrid::run()
 	if (canRun())
 	{
 		// Create the Window 
-		if (getGameWindow()->create(CAPP_PROGRA3_GEOMETRIC_WINDOW_TITLE))
+		if (getGameWindow()->create("CAPP_HEXGRID"))
 		{
 			initialize();
 
@@ -158,8 +159,8 @@ void CAppHexGrid::run()
 			getOpenGLRenderer()->setClearScreenColor(0.25f, 0.0f, 0.75f);
 
 			// Initialize window width/height in the renderer
-			getOpenGLRenderer()->setWindowWidth(getGameWindow()->getWidth());
-			getOpenGLRenderer()->setWindowHeight(getGameWindow()->getHeight());
+			//getOpenGLRenderer()->setWindowWidth(getGameWindow()->getWidth());
+			//getOpenGLRenderer()->setWindowHeight(getGameWindow()->getHeight());
 
 			if (m_initialized)
 			{
@@ -235,37 +236,70 @@ void CAppHexGrid::render()
 		double totalDegreesRotatedRadians = m_objectRotation * 3.1459 / 180.0;
 
 		// Get a matrix that has both the object rotation and translation
-		MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, m_objectPosition);
+		MathHelper::Matrix4 modelMatrix = MathHelper::SimpleModelMatrixRotationTranslation((float)totalDegreesRotatedRadians, m_objectPosition);
 
-		if (m_pyramidVertexArrayObject > 0 && m_numFacesHexagon > 0)
+		if (m_HexgridVertexArrayObject > 0 && m_numFacesHexagon > 0)
 		{
+			CGridCell cell;
+			CGrid grid;
 			CVector3 pos2 = m_objectPosition;
-			pos2 += CVector3(3.0f, 0.0f, 0.0f);
-			MathHelper::Matrix4 modelMatrix2 = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, pos2);
+			for (int j = 0; j < m_row; j++) {
+				if (m_pointy) {
+					if (j % 2 == 0) {
+							pos2 = CVector3(0.0f, 0.0f, m_height * j * 0.75f);
+							cell.m_CenterPosition = pos2;
+							grid.m_Cells.push_back(cell);
+					}
+					else {
+							pos2 = CVector3(0.5f *m_width, 0.0f, m_height * j  *0.75f);
+							cell.m_CenterPosition = pos2;
+							grid.m_Cells.push_back(cell);
+					}
+				}
+				else {
+					pos2 = CVector3(0.0f, 0.0f, m_height* j);
+				}
+				for (int i = 0; i < m_column; i++) {
+					if (m_pointy) {
+						pos2 += CVector3(m_width, 0.0f, 0.0f);
+					}
+					else {
+						if (i % 2 == 0) {
+							pos2 += CVector3(m_width * 0.75f, 0.0f, 0.5f* m_height);
+						}
+						else {
+							pos2 += CVector3(m_width * 0.75f, 0.0f, 0.5f* -m_height);
+						}
+					}
+						cell.m_CenterPosition = pos2;
+						grid.m_Cells.push_back(cell);
+						MathHelper::Matrix4 modelMatrix2 = MathHelper::SimpleModelMatrixRotationTranslation((float)totalDegreesRotatedRadians, pos2);
 
-			// Render pyramid in the first position, using the color shader
-			getOpenGLRenderer()->renderObject(
-				&m_texturedModelShaderId,
-				&m_pyramidVertexArrayObject,
-				&m_textureID,
-				m_numFacesHexagon,
-				color,
-				&modelMatrix,
-				COpenGLRenderer::EPRIMITIVE_MODE::TRIANGLES,
-				false
-			);
+						// Render pyramid in the first position, using the color shader
+						getOpenGLRenderer()->renderObject(
+							&m_texturedModelShaderId,
+							&m_HexgridVertexArrayObject,
+							&m_textureID,
+							m_numFacesHexagon,
+							color,
+							&modelMatrix2,
+							COpenGLRenderer::EPRIMITIVE_MODE::TRIANGLES,
+							false
+						);
 
-			//// Render same pyramid (same vertex array object identifier), in a second position, but this time with a texture
-			//getOpenGLRenderer()->renderObject(
-			//	&m_texturedModelShaderId,
-			//	&m_pyramidVertexArrayObject,
-			//	&m_textureID,
-			//	m_numFacesHexagon,
-			//	color,
-			//	&modelMatrix2,
-			//	COpenGLRenderer::EPRIMITIVE_MODE::TRIANGLES,
-			//	false
-			//);
+						//// Render same pyramid (same vertex array object identifier), in a second position, but this time with a texture
+						//getOpenGLRenderer()->renderObject(
+						//	&m_texturedModelShaderId,
+						//	&m_pyramidVertexArrayObject,
+						//	&m_textureID,
+						//	m_numFacesHexagon,
+						//	color,
+						//	&modelMatrix2,
+						//	COpenGLRenderer::EPRIMITIVE_MODE::TRIANGLES,
+						//	false
+						//);
+				}
+			}
 		}
 
 		// =================================
@@ -293,232 +327,135 @@ void CAppHexGrid::onMouseMove(float deltaX, float deltaY)
 }
 
 /* */
-void CAppHexGrid::createPyramidGeometry() //TODO esto ya solo hace una fila * numero, ahora debemos de hacer que agarre por numero de columnas tambie
+void CAppHexGrid::CreateGridGeometry() //TODO esto ya solo hace una fila * numero, ahora debemos de hacer que agarre por numero de columnas tambie
 {
 	bool loaded = false;
 
+	 m_row = m_hexworld->getRows(); //4;   
+	 m_column = m_hexworld->getCols();
 
-	int row = m_hexworld->getRows(); //4;   
-	int column = m_hexworld->getCols();
-	int HexagonsReady = 0; 
-	int num_hexagons = column * row;
-	int num_vertices = 6 * num_hexagons;// 6 caras hexagonio
-	m_numFacesHexagon = 4 * num_hexagons; // 4 triangulos
+	int num_vertices = 6; // 6 caras hexagono
+	m_numFacesHexagon = 4;// 4 triangulos
 
 	float v1[3], v2[3], v3[3], v1v2[3], v1v3[3], norm[3];
-	float size = m_hexworld->getSize();
+	m_size = m_hexworld->getSize();
 	float CenterX = 0.0f;
 	float CenterZ = 0.0f;
-	bool evenr = true;
-	bool pointy = true; //m_hexworld->isPointy();
-
-	float height;
-	//height *= 0.75f;
-	float width;
-	float PI = 3.1415f;
-	float * vData = new float[num_hexagons * 18];
-	float angle_deg;
-	float angle_rad;
-	int vuelta = 0; //ayuda para las rotaciones de los vertices con respondiente al grado
-
-	unsigned short * tIndices = new unsigned short[12 * num_hexagons];
-
-	if (!pointy) {
-		width = 2 * size;
-		height = sqrtf(3) * size;
-
-
-		//!pointy = flat hehe
-		for (int c = 0; c < column; c++) { //columna
-
-			for (int r = 0; r < row; r++) { //filas
-
-				for (int i = 0 + (18 * r); i < 18 * row * (c); i++) { //vertices ahora a implementar cols
-
-
-					if (r > 0) { //cualquiera despues del primero de la fila
-						if (r % 2 == 1) {
-							/*CenterX += width * 0.75f;
-							CenterZ += height * 0.5f;*/
-							vData[i + (18 * c)] = vData[(i - 18)] + (width * 0.75f);
-							i++;
-							vData[i + (18 * c)] = 0.0f;
-							i++;
-							vData[i + (18 * c)] = vData[(i - 18)] + (height * 0.5f);
-						}
-						else if (r % 2 == 0) {
-							/*CenterX -= width * 0.75f;
-							CenterZ -= height * 0.5f;*/
-							vData[i + (18 * c)] = vData[(i - 18)] + (width * 0.75f);
-							i++;
-							vData[i + (18 * c)] = 0.0f;
-							i++;
-							vData[i + (18 * c)] = vData[(i - 18)] - (height * 0.5f);
-						}
-					}
-					else if (r == 0) {
-						// primero de la fila
-						angle_deg = 60 * vuelta;
-						angle_rad = (PI / 180) * angle_deg;
-						vData[i + (18 * c)] = CenterX + cosf(angle_rad);
-						i++;
-						vData[i + (18 * c)] = 0.0f;
-						i++;
-						vData[i + (18 * c)] = CenterZ + sinf(angle_rad);
-						vuelta++;
-					}
-
-				} //fin del ciclo de vertices
-				vuelta = 0;
-
-				//triangulo 1
-				tIndices[0 + (12 * HexagonsReady)] = 4 + (6 * HexagonsReady);
-
-				tIndices[1 + (12 * HexagonsReady)] = 3 + (6 * HexagonsReady);
-
-				tIndices[2 + (12 * HexagonsReady)] = 2 + (6 * HexagonsReady);
-
-
-				//triangulo 2
-
-				tIndices[3 + (12 * HexagonsReady)] = 5 + (6 * HexagonsReady);
-
-				tIndices[4 + (12 * HexagonsReady)] = 4 + (6 * HexagonsReady);
-
-				tIndices[5 + (12 * HexagonsReady)] = 2 + (6 * HexagonsReady);
-
-
-
-				//triangulo 3
-
-				tIndices[6 + (12 * HexagonsReady)] = 5 + (6 * HexagonsReady);
-
-				tIndices[7 + (12 * HexagonsReady)] = 2 + (6 * HexagonsReady);
-
-				tIndices[8 + (12 * HexagonsReady)] = 1 + (6 * HexagonsReady);
-
-
-				//triangulo 4
-
-				tIndices[9 + (12 * HexagonsReady)] = 5 + (6 * HexagonsReady);
-
-				tIndices[10 + (12 * HexagonsReady)] = 1 + (6 * HexagonsReady);
-
-				tIndices[11 + (12 * HexagonsReady)] = 0 + (6 * HexagonsReady);
-
-				HexagonsReady++;
-			}//fin de la columna
-			CenterX = 0.0f;
-			CenterZ = (height * c) * -1;
-
-		}//fin de la fila
-		cout << "hexagonos producidos " << HexagonsReady << endl;
+	m_pointy = false;
+	//m_pointy = m_hexworld->isPointy();
+	/*if (m_hexworld->isPointy() == "pointy") {
+		m_pointy = true;
 	}
-	
-	else if (pointy) {
-		width = sqrtf(3) * size;
-		height = size * 2;
-
-		int maxIndex = (12 * num_hexagons) - 1;
-		int maxVertex = (num_hexagons * 18) - 1;
-
-		for (int r = 0; r < column; r++) { //ciclo para crear columna nueva 
-
-			for (int j = 0; j < row; j++) { //ciclo para cada hexagono de una fila
-
-				for (int i = 0 + (18 * j); i < (18 * row * r); i++) { //6 vertices de un hexagono, (r+1) causa mucho conflicto
-					
-					if (((i+2) + (18 * r)) > maxVertex)
-					{
-						cout << "ERROR !!!!!!!!!!!!!!!" << endl;
-						cout << "ERROR !!!!!!!!!!!!!!!" << endl;
-						cout << "ERROR !!!!!!!!!!!!!!!" << endl;
-					}
-
-					if (j > 0) {
-
-						vData[i + (18 * r)] = vData[(i - 18)] + width;
-						i++;
-						vData[i + (18 * r)] = 0.0f;
-						i++;
-						vData[i + (18 * r)] = vData[i - 18];
-
-					}
-					else if (j == 0) { //si j = 0, empieza una fila, crea los vertices de un hexagono en diferente centro
-
-						angle_deg = 60 * vuelta - 30.0f;
-						angle_rad = PI / 180 * angle_deg;
-						vData[i + (18 * r)] = CenterX + (size * cos(angle_rad));
-						i++;
-						vData[i + (18 * r)] = 0.0f;
-						i++;
-						vData[i + (18 * r)] = CenterZ + (size * sin(angle_rad));
-						vuelta++;
-
-					}
-				}
-				vuelta = 0;
-
-				if((11 + (12 * HexagonsReady)) > maxIndex)
-				{
-					cout << "ERROR EN TINDICES !!!!!!!!!!!!!!!" << endl;
-					cout << "ERROR EN TINDICES !!!!!!!!!!!!!!!" << endl;
-					cout << "ERROR EN TINDICES !!!!!!!!!!!!!!!" << endl;
-				}
-
-				//triangulo 1
-				tIndices[0 + (12 * HexagonsReady)] = 4 + (6 * HexagonsReady);
-				tIndices[1 + (12 * HexagonsReady)] = 1 + (6 * HexagonsReady);
-				tIndices[2 + (12 * HexagonsReady)] = 3 + (6 * HexagonsReady);
-
-				//triangulo 2
-				tIndices[3 + (12 * HexagonsReady)] = 4 + (6 * HexagonsReady);
-				tIndices[4 + (12 * HexagonsReady)] = 5 + (6 * HexagonsReady);
-				tIndices[5 + (12 * HexagonsReady)] = 0 + (6 * HexagonsReady);
-
-				//triangulo 3
-				tIndices[6 + (12 * HexagonsReady)] = 3 + (6 * HexagonsReady);
-				tIndices[7 + (12 * HexagonsReady)] = 1 + (6 * HexagonsReady);
-				tIndices[8 + (12 * HexagonsReady)] = 2 + (6 * HexagonsReady);
-
-				//triangulo 4
-				tIndices[9 + (12 * HexagonsReady)] = 1 + (6 * HexagonsReady);
-				tIndices[10 + (12 * HexagonsReady)] = 4 + (6 * HexagonsReady);
-				tIndices[11 + (12 * HexagonsReady)] = 0 + (6 * HexagonsReady);
-
-
-				HexagonsReady++;
-
-			}//fin de fila
-
-			if ((r + 1) % 2 == 1) {
-				CenterX -= (width * 0.5f);
-				CenterZ += (height * 0.75f);
-			}
-			else if ((r + 1) % 2 == 0) {
-				CenterX += (width * 0.5f);
-				CenterZ += (height * 0.75f);
-			}
-
-		}//fin de la creacion de columnas, fin del ciclo de creación de hexgrid
-	}
-
-	
-	/*for (int i = 0; i < (18 * num_hexagons); i++) {
-		cout << "coordenadas " << i / 3 << endl;
-		cout << "X: " << vData[i] << endl;
-		cout << "Z: " << vData[i + 2] << endl;
-		i += 2;
-	}
-
-	for (int i = 0; i < 12 * num_hexagons; i++) {
-		cout << "triangulo " << i << ": " << tIndices[i] << endl;
+	else {
+		m_pointy = false;
 	}*/
 
+	float PI = 3.1415f;
+	float * vData = new float[18];
+	float angle_deg;
+	float angle_rad;
 
-	float  * vertexUVs = new float[12 * num_hexagons]{ 0 };
-	float  * nData = new float[12 * num_hexagons]{ 0 };
-	unsigned short * nIndices = new unsigned short[12 * num_hexagons]{ 0 };
+	int vuelta = 0;
+	if (m_pointy) {
+		m_width = sqrtf(3) * m_size;
+
+		m_height = 2.0f * m_size;
+	}
+	else {
+		m_width = 2.0f * m_size;
+
+		m_height = sqrtf(3) * m_size;
+	}
+
+	for (int i = 0; i < 18; i++) {
+		if (m_pointy) {
+			angle_deg = vuelta * 60 - 30;
+		}
+		else {
+			angle_deg = vuelta * 60;
+		}
+		angle_rad = (PI/180) * angle_deg;
+
+		vData[i] = CenterX + m_size * cosf(angle_rad);
+		i++;
+
+		vData[i] = 0.f;
+		i++;
+		
+		vData[i] = CenterZ + m_size * sinf(angle_rad);
+
+		vuelta++;
+	}
+ 
+	for (int i = 0; i < 18; i++) {
+		cout << "vertices: " << i + 1 << endl;
+		cout << vData[i] << endl;
+		cout << vData[++i] << endl;
+		cout << vData[++i] << endl;
+
+	}
+
+	unsigned short * tIndices = new unsigned short[12];
+	if (m_pointy) {
+		tIndices[0] = 4;
+		tIndices[1] = 1;
+		tIndices[2] = 3;
+
+		//triangulo 2
+		tIndices[3] = 4;
+		tIndices[4] = 5;
+		tIndices[5] = 0;
+
+		//triangulo 3
+		tIndices[6] = 3;
+		tIndices[7] = 1;
+		tIndices[8] = 2;
+
+		//triangulo 4
+		tIndices[9] = 1;
+		tIndices[10] = 4;
+		tIndices[11] = 0;
+	}
+	else {
+		tIndices[0] = 4;
+
+		tIndices[1] = 3;
+
+		tIndices[2] = 2;
+
+
+		//triangulo 2
+
+		tIndices[3] = 5;
+
+		tIndices[4] = 4;
+
+		tIndices[5] = 2;
+
+
+
+		//triangulo 3
+
+		tIndices[6] = 5;
+
+		tIndices[7] = 2;
+
+		tIndices[8] = 1;
+
+
+		//triangulo 4
+
+		tIndices[9] = 5;
+
+		tIndices[10] = 1;
+
+		tIndices[11] = 0;
+	}
+	
+
+	float  * vertexUVs = new float[12]{ 0 };
+	float  * nData = new float[12]{ 0 };
+	unsigned short * nIndices = new unsigned short[12]{ 0 };
 	
 	
 	for (int i = 0; i < m_numFacesHexagon; i++)
@@ -558,7 +495,7 @@ void CAppHexGrid::createPyramidGeometry() //TODO esto ya solo hace una fila * nu
 	// Allocate graphics memory for object
 	loaded = getOpenGLRenderer()->allocateGraphicsMemoryForObject(
 		&m_colorModelShaderId,
-		&m_pyramidVertexArrayObject,
+		&m_HexgridVertexArrayObject,
 		vData,
 		num_vertices,        // Numero de vertices, internamente el codigo multiplica sizeof(float) * numVertices * 3
 		nData,
@@ -577,10 +514,10 @@ void CAppHexGrid::createPyramidGeometry() //TODO esto ya solo hace una fila * nu
 	{
 		m_numFacesHexagon = 0;
 
-		if (m_pyramidVertexArrayObject > 0)
+		if (m_HexgridVertexArrayObject > 0)
 		{
-			getOpenGLRenderer()->freeGraphicsMemoryForObject(&m_pyramidVertexArrayObject);
-			m_pyramidVertexArrayObject = 0;
+			getOpenGLRenderer()->freeGraphicsMemoryForObject(&m_HexgridVertexArrayObject);
+			m_HexgridVertexArrayObject = 0;
 		}
 	}
 }
@@ -606,11 +543,11 @@ void CAppHexGrid::onF3(int mods)
 }
 void CAppHexGrid::onArrowUp(int mods)
 {
-	getOpenGLRenderer()->moveCamera(0.01);
+	getOpenGLRenderer()->moveCamera(0.3);
 }
 void CAppHexGrid::onArrowDown(int mods)
 {
-	getOpenGLRenderer()->moveCamera(-0.01);
+	getOpenGLRenderer()->moveCamera(-0.3);
 }
 
 

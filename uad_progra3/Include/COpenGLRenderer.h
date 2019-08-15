@@ -47,8 +47,8 @@ public:
 	};
 
 private:
-	int m_windowWidth;
-	int m_windowHeight;
+	int m_frameBufferWidth;
+	int m_frameBufferHeight;
 	bool m_OpenGLError;
 
 	std::map<int, COpenGLShaderProgram*> m_shaderProgramWrappers;
@@ -83,8 +83,8 @@ private:
 		GLfloat *UVcoords, int numUVCoords,
 		int numIndicesVert,
 		unsigned short *indicesVertices,
-		unsigned short *indicesNormals, 
-		unsigned short *indicesUVCoords, 
+		unsigned short *indicesNormals,
+		unsigned short *indicesUVCoords,
 		GLfloat *finalVertices,
 		GLfloat *finalNormals,
 		GLfloat *finalUVCoords,
@@ -126,7 +126,7 @@ public:
 	// =================================================================
 	bool allocateGraphicsMemoryForObject(
 		unsigned int *shaderProgramId,
-		unsigned int *vertexArrayObjectID, 
+		unsigned int *vertexArrayObjectID,
 		GLfloat *vertices, int numVertices,
 		GLfloat *normals, int numNormals,
 		GLfloat *UVcoords, int numUVCoords,
@@ -171,9 +171,9 @@ public:
 
 	//
 	bool createTextureObject(
-		unsigned int *textureObjectId, 
+		unsigned int *textureObjectId,
 		unsigned char *textureData,
-		int width, 
+		int width,
 		int height);
 
 	// 
@@ -194,24 +194,49 @@ public:
 		MathHelper::Matrix4 *objectTransformation = NULL,
 		EPRIMITIVE_MODE mode = TRIANGLES,
 		bool drawIndexedPrimitives = false);
+	//
+	bool renderObjectMultiMat(
+		int scopeF,
+		int scopeL,
+		unsigned int *shaderProgramId,
+		unsigned int *vertexArrayObjectId,
+		unsigned int *textureObjMatId,
+		int numFaces,
+		GLfloat *objectColor,
+		MathHelper::Matrix4 *objectTransformation = NULL,
+		EPRIMITIVE_MODE mode = TRIANGLES,
+		bool drawIndexedPrimitives = false
+	);
 
 	//
 	bool renderMenuItem(
-		unsigned int *shaderProgramId, 
+		unsigned int *shaderProgramId,
 		unsigned int *textureObjectId,
 		unsigned int *vertexArrayObjectId,
 		GLfloat *menuItemColor);
 
 	//
-	void setWindowWidth(int width) { m_windowWidth = width; }
-	void setWindowHeight(int height) { m_windowHeight = height; }
+	void setFramebufferWidth(int width) { m_frameBufferWidth = width; }
+	void setFramebufferHeight(int height) { m_frameBufferHeight = height; }
+	int getFramebufferWidth() const { return m_frameBufferWidth; }
+	int getFramebufferHeight() const { return m_frameBufferHeight; }
 
 	//
 	void renderColorCube(MathHelper::Matrix4 *objectTransformation = NULL);
+	void renderColorCube(
+		MathHelper::Matrix4 *modelMatrix,
+		MathHelper::Matrix4 *viewMatrix,
+		MathHelper::Matrix4 *projectionMatrix);
 	void initializeColorCube();
 
 	//
 	void renderTexturedCube(unsigned int cubeTextureID, MathHelper::Matrix4 *objectTransformation = NULL);
+	void renderTexturedCube(
+		unsigned int cubeTextureID,
+		MathHelper::Matrix4 * modelMatrix,
+		MathHelper::Matrix4 *viewMatrix,
+		MathHelper::Matrix4 *projectionMatrix);
+
 	void initializeTexturedCube();
 
 	//
@@ -252,19 +277,19 @@ public:
 	void activateOpenGLDebugging();
 
 	// 
-	void setWireframePolygonMode() { glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	}
+	void setWireframePolygonMode() { glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
 
 	// 
 	void setFillPolygonMode() { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
 
 	//
 	static void APIENTRY debugOutputCallback(
-		GLenum source, 
-		GLenum type, 
-		GLuint id, 
+		GLenum source,
+		GLenum type,
+		GLuint id,
 		GLenum severity,
-		GLsizei length, 
-		const GLchar *message, 
+		GLsizei length,
+		const GLchar *message,
 		const GLvoid *userParam);
 };
 

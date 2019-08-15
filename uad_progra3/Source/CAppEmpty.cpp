@@ -60,8 +60,8 @@ void CAppEmpty::run()
 			getOpenGLRenderer()->setClearScreenColor(0.25f, 0.0f, 0.75f);
 
 			// Initialize window width/height in the renderer
-			getOpenGLRenderer()->setWindowWidth(getGameWindow()->getWidth());
-			getOpenGLRenderer()->setWindowHeight(getGameWindow()->getHeight());
+			//getOpenGLRenderer()->setWindowWidth(getGameWindow()->getWidth());
+			//getOpenGLRenderer()->setWindowHeight(getGameWindow()->getHeight());
 
 			// Enter main loop
 			cout << "Entering Main loop" << endl;

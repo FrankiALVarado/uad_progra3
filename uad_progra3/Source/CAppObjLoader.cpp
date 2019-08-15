@@ -59,8 +59,8 @@ void CAppObjLoader::run()
 			// Set initial clear screen color
 			getOpenGLRenderer()->setClearScreenColor(0.15f, 0.75f, 0.75f);
 			// Initialize window width/height in the renderer
-			getOpenGLRenderer()->setWindowWidth(getGameWindow()->getWidth());
-			getOpenGLRenderer()->setWindowHeight(getGameWindow()->getHeight());
+			//getOpenGLRenderer()->setWindowWidth(getGameWindow()->getWidth());
+			//getOpenGLRenderer()->setWindowHeight(getGameWindow()->getHeight());
 
 			// Create our menu (add all menu items)
 			if (!initializeMenu())
@@ -250,7 +250,7 @@ void CAppObjLoader::render()
 			double totalDegreesRotatedRadians = m_objectRotation * 3.1459 / 180.0;
 
 			// Get a matrix that has both the object rotation and translation
-			MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, m_objectPosition);
+			MathHelper::Matrix4 modelMatrix = MathHelper::SimpleModelMatrixRotationTranslation((float)totalDegreesRotatedRadians, m_objectPosition);
 
 			getOpenGLRenderer()->renderObject(
 				m_p3DModel->getShaderProgramId(),

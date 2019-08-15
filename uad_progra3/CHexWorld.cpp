@@ -37,12 +37,16 @@ float CHexWorld::getSize()
 	return j["HexGrid"]["cellSize"];
 }
 
-bool CHexWorld::isPointy()
+bool  CHexWorld::isPointy()
 {
-	char * orientation;
 	ifstream file("C:\\Users\\frank\\OneDrive\\Documentos\\hexgrid_cfg.json");
 	json j;
 	j << file;
-	return j["HexGrid"]["Orientation"];
+	if (j["HexGrid"]["orientation"] == "pointy") {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 		

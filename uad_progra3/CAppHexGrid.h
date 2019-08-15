@@ -7,6 +7,13 @@ class CAppHexGrid : public CApp
 	bool m_initialized;
 
 	CHexWorld * m_hexworld;
+
+	float m_width;
+	float m_height;
+	float m_size;
+	int m_row;
+	int m_column;
+	bool m_pointy;
 	// Variables used for controlling the rotation and object position
 	// ---------------------------------------------------------------
 
@@ -33,7 +40,7 @@ class CAppHexGrid : public CApp
 
 	// An OpenGL Vertex Array Object is a reference to graphics memory that tells OpenGL where to look for the geometry of the object
 	// It needs to be initialized using the allocateGraphicsMemory() method from the renderer.
-	unsigned int m_pyramidVertexArrayObject;
+	unsigned int m_HexgridVertexArrayObject;
 
 	// Identifier for the OpenGL Texture Object 
 	unsigned int m_textureID;
@@ -91,7 +98,7 @@ public:
 	void onArrowDown(int mod);
 private:
 
-	void createPyramidGeometry();
+	void CreateGridGeometry();
 	void normcrossprod(float v1[3], float v2[3], float out[3]);
 	void normalize(float v[3]);
 

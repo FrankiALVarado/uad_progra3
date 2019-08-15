@@ -55,7 +55,28 @@ CVector3& CVector3::operator+=(const CVector3 &other)
 
 	return *this;
 }
+/*
+*/
+CVector3 CVector3::operator*(const float &other)
+{
+	CVector3 res;
+	res.setValues(
+		this->X * other,
+		this->Y * other,
+		this->Z * other
+	);
+	return res;
+}
+/*
+*/
+CVector3& CVector3::operator*=(const float &other)
+{
+	X *= other;
+	Y *= other;
+	Z *= other;
 
+	return *this;
+}
 /*
 */
 CVector3& CVector3::operator-=(const CVector3 &other)
